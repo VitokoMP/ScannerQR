@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Valida — Validación QR para eventos</title>
+    <title>Valida — Propuesta de validación QR para eventos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -54,8 +54,7 @@
             }
         }
 
-        a:focus-visible,
-        button:focus-visible {
+        a:focus-visible {
             outline: 2px solid var(--color-mint);
             outline-offset: 3px;
             border-radius: 2px;
@@ -135,24 +134,6 @@
             width: 100%;
         }
 
-        .nav .btn-ghost {
-            background: rgba(0, 212, 170, 0.08);
-            padding: 4px 16px;
-            border-radius: 999px;
-            border: 1px solid rgba(0, 212, 170, 0.12);
-            color: var(--color-mint);
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-
-        .nav .btn-ghost::after {
-            display: none;
-        }
-
-        .nav .btn-ghost:hover {
-            background: rgba(0, 212, 170, 0.16);
-        }
-
         /* ===== HERO ===== */
         .hero {
             padding: 48px 0 32px;
@@ -205,56 +186,6 @@
             font-weight: 500;
         }
 
-        .hero-cta {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 4px;
-        }
-
-        .btn-primary {
-            background: var(--color-mint);
-            color: var(--color-deep);
-            font-family: var(--font-body);
-            font-weight: 600;
-            font-size: 0.9rem;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 999px;
-            cursor: pointer;
-            transition: background 0.25s ease, transform 0.15s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-primary:hover {
-            background: #00bf99;
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--color-surface);
-            font-family: var(--font-body);
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 12px 28px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 999px;
-            cursor: pointer;
-            transition: background 0.25s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.06);
-        }
-
         /* ===== QR SCANNER ===== */
         .scanner-wrapper {
             display: flex;
@@ -277,7 +208,6 @@
             overflow: hidden;
         }
 
-        /* QR pattern simulation */
         .qr-pattern {
             width: 140px;
             height: 140px;
@@ -302,7 +232,6 @@
             background: transparent;
         }
 
-        /* Scan line */
         .scan-line {
             position: absolute;
             left: 10%;
@@ -478,23 +407,6 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
 
-        .service-card .arrow-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            color: var(--color-mint);
-            font-size: 0.8rem;
-            font-weight: 500;
-            text-decoration: none;
-            margin-top: 4px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .service-card:hover .arrow-link {
-            opacity: 1;
-        }
-
         /* ===== HOW IT WORKS ===== */
         .how-it-works {
             padding: 32px 0 48px;
@@ -598,6 +510,10 @@
             border-color: rgba(0, 212, 170, 0.12);
         }
 
+        .pricing-card.highlight {
+            border-color: rgba(0, 212, 170, 0.15);
+        }
+
         .pricing-card .plan {
             font-family: var(--font-display);
             font-weight: 600;
@@ -644,51 +560,31 @@
             opacity: 0.4;
         }
 
-        .pricing-card .btn-outline {
-            display: inline-block;
-            background: transparent;
-            color: var(--color-surface);
-            font-family: var(--font-body);
-            font-weight: 500;
-            font-size: 0.8rem;
-            padding: 8px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 999px;
-            text-decoration: none;
-            transition: background 0.25s ease, border-color 0.25s ease;
-        }
-
-        .pricing-card .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.02);
-            border-color: rgba(255, 255, 255, 0.12);
-        }
-
-        .pricing-card .btn-outline.primary {
-            background: var(--color-mint);
-            color: var(--color-deep);
-            border: none;
-            font-weight: 600;
-        }
-
-        .pricing-card .btn-outline.primary:hover {
-            background: #00bf99;
-        }
-
-        /* ===== FAQ / NEXT STEPS ===== */
-        .next-steps {
+        /* ===== DIAGNOSTIC QUESTIONS ===== */
+        .diagnostico {
             padding: 32px 0 48px;
             border-top: 1px solid var(--color-border);
         }
 
-        .next-steps h2 {
+        .diagnostico .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-mint);
+            opacity: 0.4;
+            margin-bottom: 4px;
+        }
+
+        .diagnostico h2 {
             font-family: var(--font-display);
             font-weight: 600;
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             letter-spacing: -0.02em;
             margin-bottom: 8px;
         }
 
-        .next-steps .sub {
+        .diagnostico .sub {
             color: var(--color-muted);
             font-size: 0.95rem;
             margin-bottom: 20px;
@@ -700,7 +596,6 @@
             gap: 8px 32px;
             font-size: 0.85rem;
             color: var(--color-muted);
-            margin-bottom: 20px;
         }
 
         .questions-grid li {
@@ -763,10 +658,6 @@
                 align-items: center;
             }
 
-            .hero-cta {
-                justify-content: center;
-            }
-
             .services-grid,
             .pricing-grid {
                 grid-template-columns: 1fr 1fr;
@@ -814,12 +705,6 @@
                 font-size: 1.8rem;
             }
 
-            .btn-primary,
-            .btn-secondary {
-                width: 100%;
-                justify-content: center;
-            }
-
             .scanner-frame {
                 width: 160px;
                 height: 160px;
@@ -848,12 +733,11 @@
                 Valida<span>·</span>
                 <small>QR</small>
             </a>
-            <nav class="nav" aria-label="Navegación principal">
-                <a href="#services">Servicios</a>
-                <a href="#how">Cómo funciona</a>
-                <a href="#pricing">Precios</a>
-                <a href="#next">Diagnóstico</a>
-                <a href="#" class="btn-ghost">Contacto</a>
+            <nav class="nav" aria-label="Navegación">
+                <a href="#servicios">Servicios</a>
+                <a href="#como-funciona">Cómo funciona</a>
+                <a href="#precios">Precios</a>
+                <a href="#diagnostico">Diagnóstico</a>
             </nav>
         </header>
 
@@ -868,16 +752,11 @@
                     Validación de entradas en <span class="highlight">menos de 2 segundos</span>.
                     Sin reemplazar tu sistema actual. Sin ataduras.
                 </p>
-                <div class="hero-cta">
-                    <a href="#next" class="btn-primary">↳ Diagnosticar</a>
-                    <a href="#services" class="btn-secondary">Ver servicios</a>
-                </div>
             </div>
 
             <div class="scanner-wrapper">
                 <div class="scanner-frame">
                     <div class="qr-pattern" aria-hidden="true">
-                        <!-- QR pattern simulation -->
                         <div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div>
                         <div class="cell filled"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell filled"></div>
                         <div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div>
@@ -904,7 +783,7 @@
         </div>
 
         <!-- ===== SERVICES ===== -->
-        <section class="services" id="services">
+        <section class="services" id="servicios">
             <div style="font-family:var(--font-mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--color-mint);opacity:0.4;margin-bottom:4px;">
                 Tres formas de trabajar
             </div>
@@ -918,7 +797,6 @@
                         en la puerta, con registro y control de duplicados.
                     </p>
                     <span class="tag">✓ Listo para desplegar</span>
-                    <a href="#pricing" class="arrow-link">Ver precios →</a>
                 </div>
 
                 <div class="service-card">
@@ -930,7 +808,6 @@
                         los asociamos, y validamos en puerta.
                     </p>
                     <span class="tag muted">Requiere integración</span>
-                    <a href="#pricing" class="arrow-link">Ver precios →</a>
                 </div>
 
                 <div class="service-card">
@@ -942,33 +819,32 @@
                         por correo, validación, reportes y soporte.
                     </p>
                     <span class="tag muted">Mensual · bajo demanda</span>
-                    <a href="#pricing" class="arrow-link">Ver precios →</a>
                 </div>
             </div>
         </section>
 
         <!-- ===== HOW IT WORKS ===== -->
-        <section class="how-it-works" id="how">
+        <section class="how-it-works" id="como-funciona">
             <div class="section-label">Cómo funciona</div>
             <h2>Sin misterios: <span style="color:var(--color-mint);">3 pasos</span></h2>
             <div class="steps">
                 <div class="step">
-                    <h4>1. Diagnóstico</h4>
+                    <h4>Diagnóstico</h4>
                     <p>Revisamos tu sistema actual: ¿tienes QR? ¿dónde está la base de datos? ¿qué necesitas validar?</p>
                 </div>
                 <div class="step">
-                    <h4>2. Integración</h4>
+                    <h4>Integración</h4>
                     <p>Conectamos tu sistema (o generamos QR si no tienes). Desplegamos el endpoint de validación.</p>
                 </div>
                 <div class="step">
-                    <h4>3. Validación</h4>
+                    <h4>Validación</h4>
                     <p>Escaneo en puerta con cualquier teléfono. Registro automático. Reporte post-evento.</p>
                 </div>
             </div>
         </section>
 
         <!-- ===== PRICING ===== -->
-        <section class="pricing" id="pricing">
+        <section class="pricing" id="precios">
             <div class="section-label">Modelos de precio</div>
             <h2>Paga solo por lo que <span style="color:var(--color-mint);">usas</span></h2>
             <div class="pricing-grid">
@@ -984,10 +860,9 @@
                         <li>Soporte durante el evento</li>
                         <li>Reporte post-evento</li>
                     </ul>
-                    <a href="#next" class="btn-outline">Consultar</a>
                 </div>
 
-                <div class="pricing-card" style="border-color:rgba(0,212,170,0.15);">
+                <div class="pricing-card highlight">
                     <div class="plan">Plan mensual</div>
                     <div class="price">
                         $1.000.000 <span class="period">/mes</span>
@@ -999,7 +874,6 @@
                         <li>Reportes consolidados</li>
                         <li>Soporte prioritario</li>
                     </ul>
-                    <a href="#next" class="btn-outline primary">Cotizar</a>
                 </div>
 
                 <div class="pricing-card">
@@ -1014,13 +888,13 @@
                         <li>Integración con sistema existente</li>
                         <li>Contrato mensual sin permanencia</li>
                     </ul>
-                    <a href="#next" class="btn-outline">Contactar</a>
                 </div>
             </div>
         </section>
 
-        <!-- ===== NEXT STEPS ===== -->
-        <section class="next-steps" id="next">
+        <!-- ===== DIAGNOSTIC QUESTIONS ===== -->
+        <section class="diagnostico" id="diagnostico">
+            <div class="section-label">Próximos pasos</div>
             <h2>¿Qué necesitamos saber de ti?</h2>
             <div class="sub">Antes de cotizar, revisemos juntos tu situación actual.</div>
 
@@ -1036,11 +910,6 @@
                 <li>¿Buscan solo validación o también generación?</li>
                 <li>¿Necesitan envío de entradas por correo?</li>
             </ul>
-
-            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
-                <a href="#" class="btn-primary">↳ Agendar diagnóstico</a>
-                <a href="#" class="btn-secondary">Descargar briefing</a>
-            </div>
         </section>
 
         <!-- ===== FOOTER ===== -->
@@ -1049,15 +918,13 @@
             <div class="footer-links">
                 <a href="#">Privacidad</a>
                 <a href="#">Términos</a>
-                <a href="#">Contacto</a>
             </div>
         </footer>
 
     </div>
 
     <script>
-        // ===== SCROLL ANIMATION FOR SERVICE CARDS =====
-        // Simple intersection observer for visual polish
+        // ===== SCROLL ANIMATION =====
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.service-card, .pricing-card');
             if (!cards.length) return;
