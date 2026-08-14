@@ -1,0 +1,2 @@
+# ScannerQR
+descripcion tecnica.
