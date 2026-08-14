@@ -78,27 +78,35 @@
         }
 
         .logo {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.4rem;
-            letter-spacing: -0.02em;
-            color: var(--color-surface);
-            text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
+            text-decoration: none;
         }
 
-        .logo span {
-            color: var(--color-mint);
+        .logo img {
+            height: 36px;
+            width: auto;
+            display: block;
+            border-radius: 6px;
         }
 
-        .logo small {
-            font-size: 0.55rem;
+        .logo-text {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--color-surface);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .logo-text small {
+            display: block;
+            font-size: 0.5rem;
             font-weight: 400;
-            opacity: 0.4;
+            opacity: 0.3;
             letter-spacing: 0.06em;
-            margin-left: 4px;
+            margin-top: -2px;
         }
 
         .nav {
@@ -624,6 +632,19 @@
             opacity: 0.5;
         }
 
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-brand img {
+            height: 18px;
+            width: auto;
+            opacity: 0.4;
+            border-radius: 4px;
+        }
+
         .site-footer a {
             color: var(--color-muted);
             text-decoration: none;
@@ -690,6 +711,14 @@
                 gap: 12px;
             }
 
+            .logo img {
+                height: 28px;
+            }
+
+            .logo-text {
+                font-size: 0.75rem;
+            }
+
             .nav {
                 gap: 14px;
                 font-size: 0.7rem;
@@ -720,6 +749,11 @@
                 gap: 4px;
                 align-items: center;
             }
+
+            .site-footer {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -727,11 +761,14 @@
 
     <div class="container">
 
-        <!-- ===== HEADER ===== -->
+        <!-- ===== HEADER CON LOGO ===== -->
         <header class="site-header">
             <a href="#" class="logo">
-                Valida<span>·</span>
-                <small>QR</small>
+                <img src="https://raw.githubusercontent.com/VitokoMP/ScannerQR/main/me.jpg" alt="AlekArt Codes" />
+                <span class="logo-text">
+                    Validación QR
+                    <small>por AlekArt Codes</small>
+                </span>
             </a>
             <nav class="nav" aria-label="Navegación">
                 <a href="#servicios">Servicios</a>
@@ -912,9 +949,12 @@
             </ul>
         </section>
 
-        <!-- ===== FOOTER ===== -->
+        <!-- ===== FOOTER CON LOGO ===== -->
         <footer class="site-footer">
-            <span>Valida · Validación QR para eventos · 2026</span>
+            <div class="footer-brand">
+                <img src="https://raw.githubusercontent.com/VitokoMP/ScannerQR/main/me.jpg" alt="AlekArt Codes" />
+                <span>Valida · Validación QR para eventos · 2026</span>
+            </div>
             <div class="footer-links">
                 <a href="#">Privacidad</a>
                 <a href="#">Términos</a>
