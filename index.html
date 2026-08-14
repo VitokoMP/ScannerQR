@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Valida — Propuesta de validación QR para eventos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET & BASE ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-deep: #0A0E17;
+            --color-surface: #E8EDF2;
+            --color-mint: #00D4AA;
+            --color-coral: #FF6B4A;
+            --color-card: #1A2332;
+            --color-muted: #5A7A92;
+            --color-border: rgba(0, 212, 170, 0.10);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--color-deep);
+            color: var(--color-surface);
+            font-family: var(--font-body);
+            font-weight: 400;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        a:focus-visible {
+            outline: 2px solid var(--color-mint);
+            outline-offset: 3px;
+            border-radius: 2px;
+        }
+
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ===== HEADER ===== */
+        .site-header {
+            padding: 24px 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 36px;
+            width: auto;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--color-surface);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .logo-text small {
+            display: block;
+            font-size: 0.5rem;
+            font-weight: 400;
+            opacity: 0.3;
+            letter-spacing: 0.06em;
+            margin-top: -2px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 24px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        .nav a {
+            color: var(--color-muted);
+            text-decoration: none;
+            transition: color 0.25s ease;
+            position: relative;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: var(--color-mint);
+            transition: width 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--color-surface);
+        }
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: 48px 0 32px;
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-mint);
+            opacity: 0.6;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(2.2rem, 5vw, 3.2rem);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--color-surface);
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--color-coral);
+            font-weight: 500;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: var(--color-muted);
+            max-width: 460px;
+            line-height: 1.7;
+        }
+
+        .hero .highlight {
+            color: var(--color-surface);
+            font-weight: 500;
+        }
+
+        /* ===== QR SCANNER ===== */
+        .scanner-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .scanner-frame {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(0, 212, 170, 0.15);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .qr-pattern {
+            width: 140px;
+            height: 140px;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-template-rows: repeat(7, 1fr);
+            gap: 2px;
+            opacity: 0.25;
+        }
+
+        .qr-pattern .cell {
+            background: var(--color-surface);
+            border-radius: 1px;
+        }
+
+        .qr-pattern .cell.filled {
+            background: var(--color-mint);
+            opacity: 0.7;
+        }
+
+        .qr-pattern .cell.empty {
+            background: transparent;
+        }
+
+        .scan-line {
+            position: absolute;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: var(--color-mint);
+            box-shadow: 0 0 20px rgba(0, 212, 170, 0.25), 0 0 60px rgba(0, 212, 170, 0.08);
+            animation: scan 2.2s ease-in-out infinite;
+            border-radius: 2px;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 12%;
+                opacity: 0.3;
+            }
+            50% {
+                top: 82%;
+                opacity: 1;
+            }
+            100% {
+                top: 12%;
+                opacity: 0.3;
+            }
+        }
+
+        .scanner-stats {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            font-size: 0.7rem;
+            color: var(--color-muted);
+            font-family: var(--font-mono);
+            letter-spacing: 0.04em;
+        }
+
+        .scanner-stats .stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .scanner-stats .stat .num {
+            color: var(--color-mint);
+            font-weight: 500;
+        }
+
+        .scanner-stats .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--color-mint);
+            display: inline-block;
+            animation: blink-dot 1.6s ease-in-out infinite;
+        }
+
+        @keyframes blink-dot {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.15;
+            }
+        }
+
+        /* ===== POSITIONING MESSAGE ===== */
+        .positioning {
+            text-align: center;
+            padding: 20px 0 32px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .positioning .big-message {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            letter-spacing: -0.02em;
+            color: var(--color-surface);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .positioning .big-message span {
+            color: var(--color-mint);
+            background: rgba(0, 212, 170, 0.06);
+            padding: 0 8px;
+            border-radius: 4px;
+        }
+
+        /* ===== SERVICES (3 modules) ===== */
+        .services {
+            padding: 24px 0 40px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 8px;
+        }
+
+        .service-card {
+            background: var(--color-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 28px 24px 24px;
+            transition: border-color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .service-card:hover {
+            border-color: rgba(0, 212, 170, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .service-card .badge {
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--color-mint);
+            opacity: 0.5;
+            margin-bottom: 6px;
+        }
+
+        .service-card .number {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--color-surface);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .service-card .number small {
+            font-size: 0.8rem;
+            font-weight: 400;
+            opacity: 0.3;
+            margin-left: 4px;
+        }
+
+        .service-card h3 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--color-surface);
+            margin-bottom: 4px;
+        }
+
+        .service-card p {
+            font-size: 0.85rem;
+            color: var(--color-muted);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .service-card .tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 2px 10px;
+            border-radius: 999px;
+            background: rgba(0, 212, 170, 0.06);
+            color: var(--color-mint);
+            border: 1px solid rgba(0, 212, 170, 0.06);
+        }
+
+        .service-card .tag.muted {
+            color: var(--color-muted);
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* ===== HOW IT WORKS ===== */
+        .how-it-works {
+            padding: 32px 0 48px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .how-it-works .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-mint);
+            opacity: 0.4;
+            margin-bottom: 4px;
+        }
+
+        .how-it-works h2 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.6rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            counter-reset: step;
+        }
+
+        .step {
+            counter-increment: step;
+            padding: 20px 0;
+            border-top: 2px solid rgba(0, 212, 170, 0.06);
+            position: relative;
+        }
+
+        .step::before {
+            content: "0" counter(step);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--color-mint);
+            opacity: 0.3;
+            letter-spacing: 0.04em;
+        }
+
+        .step h4 {
+            font-family: var(--font-display);
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--color-surface);
+            margin: 4px 0 2px;
+        }
+
+        .step p {
+            font-size: 0.8rem;
+            color: var(--color-muted);
+            line-height: 1.6;
+        }
+
+        /* ===== PRICING ===== */
+        .pricing {
+            padding: 32px 0 48px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .pricing .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-mint);
+            opacity: 0.4;
+            margin-bottom: 4px;
+        }
+
+        .pricing h2 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.6rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .pricing-card {
+            background: var(--color-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 24px 24px 28px;
+            transition: border-color 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(0, 212, 170, 0.12);
+        }
+
+        .pricing-card.highlight {
+            border-color: rgba(0, 212, 170, 0.15);
+        }
+
+        .pricing-card .plan {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--color-surface);
+            margin-bottom: 2px;
+        }
+
+        .pricing-card .price {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 2rem;
+            color: var(--color-surface);
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        .pricing-card .price .period {
+            font-size: 0.8rem;
+            font-weight: 400;
+            opacity: 0.3;
+            margin-left: 4px;
+        }
+
+        .pricing-card .price .note {
+            font-size: 0.65rem;
+            font-weight: 400;
+            opacity: 0.4;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .pricing-card ul {
+            list-style: none;
+            margin: 12px 0 16px;
+            font-size: 0.8rem;
+            color: var(--color-muted);
+            line-height: 2;
+        }
+
+        .pricing-card ul li::before {
+            content: "› ";
+            color: var(--color-mint);
+            opacity: 0.4;
+        }
+
+        /* ===== DIAGNOSTIC QUESTIONS ===== */
+        .diagnostico {
+            padding: 32px 0 48px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .diagnostico .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-mint);
+            opacity: 0.4;
+            margin-bottom: 4px;
+        }
+
+        .diagnostico h2 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.6rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .diagnostico .sub {
+            color: var(--color-muted);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .questions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 32px;
+            font-size: 0.85rem;
+            color: var(--color-muted);
+        }
+
+        .questions-grid li {
+            list-style: none;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .questions-grid li::before {
+            content: "› ";
+            color: var(--color-mint);
+            opacity: 0.3;
+        }
+
+        /* ===== FOOTER ===== */
+        .site-footer {
+            border-top: 1px solid var(--color-border);
+            padding: 24px 0 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.7rem;
+            color: var(--color-muted);
+            opacity: 0.5;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-brand img {
+            height: 18px;
+            width: auto;
+            opacity: 0.4;
+            border-radius: 4px;
+        }
+
+        .site-footer a {
+            color: var(--color-muted);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        .site-footer a:hover {
+            border-color: var(--color-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 820px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                text-align: center;
+                padding: 24px 0 16px;
+            }
+
+            .hero p {
+                max-width: 100%;
+                margin: 0 auto;
+            }
+
+            .hero-content {
+                align-items: center;
+            }
+
+            .services-grid,
+            .pricing-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .questions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scanner-frame {
+                width: 180px;
+                height: 180px;
+            }
+
+            .qr-pattern {
+                width: 110px;
+                height: 110px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .site-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .logo img {
+                height: 28px;
+            }
+
+            .logo-text {
+                font-size: 0.75rem;
+            }
+
+            .nav {
+                gap: 14px;
+                font-size: 0.7rem;
+                flex-wrap: wrap;
+            }
+
+            .services-grid,
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .scanner-frame {
+                width: 160px;
+                height: 160px;
+            }
+
+            .qr-pattern {
+                width: 100px;
+                height: 100px;
+            }
+
+            .scanner-stats {
+                flex-direction: column;
+                gap: 4px;
+                align-items: center;
+            }
+
+            .site-footer {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ===== HEADER CON LOGO ===== -->
+        <header class="site-header">
+            <a href="#" class="logo">
+                <img src="https://raw.githubusercontent.com/VitokoMP/ScannerQR/main/me.jpg" alt="AlekArt Codes" />
+                <span class="logo-text">
+                    Validación QR
+                    <small>por AlekArt Codes</small>
+                </span>
+            </a>
+            <nav class="nav" aria-label="Navegación">
+                <a href="#servicios">Servicios</a>
+                <a href="#como-funciona">Cómo funciona</a>
+                <a href="#precios">Precios</a>
+                <a href="#diagnostico">Diagnóstico</a>
+            </nav>
+        </header>
+
+        <!-- ===== HERO ===== -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-eyebrow">Control de acceso por QR</div>
+                <h1>
+                    Entrada que no valida, <em>cliente que no vuelve</em>
+                </h1>
+                <p>
+                    Validación de entradas en <span class="highlight">menos de 2 segundos</span>.
+                    Sin reemplazar tu sistema actual. Sin ataduras.
+                </p>
+            </div>
+
+            <div class="scanner-wrapper">
+                <div class="scanner-frame">
+                    <div class="qr-pattern" aria-hidden="true">
+                        <div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div>
+                        <div class="cell filled"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell filled"></div>
+                        <div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div>
+                        <div class="cell empty"></div><div class="cell empty"></div><div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div><div class="cell empty"></div><div class="cell empty"></div>
+                        <div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div>
+                        <div class="cell filled"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell filled"></div>
+                        <div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell empty"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div>
+                    </div>
+                    <div class="scan-line"></div>
+                </div>
+                <div class="scanner-stats">
+                    <span class="stat"><span class="num">1.7s</span> validación</span>
+                    <span class="stat"><span class="dot"></span> activo</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== POSITIONING ===== -->
+        <div class="positioning">
+            <div class="big-message">
+                No necesitas reemplazar tu sistema actual.
+                <span>Elige solo lo que falta.</span>
+            </div>
+        </div>
+
+        <!-- ===== SERVICES ===== -->
+        <section class="services" id="servicios">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--color-mint);opacity:0.4;margin-bottom:4px;">
+                Tres formas de trabajar
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="badge">Servicio 1</div>
+                    <div class="number">01 <small>validación</small></div>
+                    <h3>Solo validación QR</h3>
+                    <p>
+                        Ya tienes entradas con QR. Solo necesitas validar rápido
+                        en la puerta, con registro y control de duplicados.
+                    </p>
+                    <span class="tag">✓ Listo para desplegar</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="badge">Servicio 2</div>
+                    <div class="number">02 <small>generación + validación</small></div>
+                    <h3>Generación y validación</h3>
+                    <p>
+                        Tienes la base de datos pero no los QR. Te los generamos,
+                        los asociamos, y validamos en puerta.
+                    </p>
+                    <span class="tag muted">Requiere integración</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="badge">Servicio 3</div>
+                    <div class="number">03 <small>ticketera completa</small></div>
+                    <h3>Ticketera completa</h3>
+                    <p>
+                        Desde la venta hasta la validación. Generación, QR, envío
+                        por correo, validación, reportes y soporte.
+                    </p>
+                    <span class="tag muted">Mensual · bajo demanda</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== HOW IT WORKS ===== -->
+        <section class="how-it-works" id="como-funciona">
+            <div class="section-label">Cómo funciona</div>
+            <h2>Sin misterios: <span style="color:var(--color-mint);">3 pasos</span></h2>
+            <div class="steps">
+                <div class="step">
+                    <h4>Diagnóstico</h4>
+                    <p>Revisamos tu sistema actual: ¿tienes QR? ¿dónde está la base de datos? ¿qué necesitas validar?</p>
+                </div>
+                <div class="step">
+                    <h4>Integración</h4>
+                    <p>Conectamos tu sistema (o generamos QR si no tienes). Desplegamos el endpoint de validación.</p>
+                </div>
+                <div class="step">
+                    <h4>Validación</h4>
+                    <p>Escaneo en puerta con cualquier teléfono. Registro automático. Reporte post-evento.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== PRICING ===== -->
+        <section class="pricing" id="precios">
+            <div class="section-label">Modelos de precio</div>
+            <h2>Paga solo por lo que <span style="color:var(--color-mint);">usas</span></h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="plan">Evento puntual</div>
+                    <div class="price">
+                        $150.000 <span class="period">+ 1,3%</span>
+                        <span class="note">instalación + comisión por entrada</span>
+                    </div>
+                    <ul>
+                        <li>Validación QR en puerta</li>
+                        <li>Registro de accesos</li>
+                        <li>Soporte durante el evento</li>
+                        <li>Reporte post-evento</li>
+                    </ul>
+                </div>
+
+                <div class="pricing-card highlight">
+                    <div class="plan">Plan mensual</div>
+                    <div class="price">
+                        $1.000.000 <span class="period">/mes</span>
+                        <span class="note">hasta 10 eventos · $1.500.000 si es individual</span>
+                    </div>
+                    <ul>
+                        <li>Hasta 10 eventos al mes</li>
+                        <li>Validación + generación (si aplica)</li>
+                        <li>Reportes consolidados</li>
+                        <li>Soporte prioritario</li>
+                    </ul>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="plan">A medida</div>
+                    <div class="price">
+                        A convenir <span class="period"></span>
+                        <span class="note">Ticketera completa o integración compleja</span>
+                    </div>
+                    <ul>
+                        <li>Generación + envío + validación</li>
+                        <li>Base de datos + reportes</li>
+                        <li>Integración con sistema existente</li>
+                        <li>Contrato mensual sin permanencia</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== DIAGNOSTIC QUESTIONS ===== -->
+        <section class="diagnostico" id="diagnostico">
+            <div class="section-label">Próximos pasos</div>
+            <h2>¿Qué necesitamos saber de ti?</h2>
+            <div class="sub">Antes de cotizar, revisemos juntos tu situación actual.</div>
+
+            <ul class="questions-grid">
+                <li>¿Cómo generan hoy las entradas y los QR?</li>
+                <li>¿Qué información contiene el QR?</li>
+                <li>¿Dónde está almacenada esa información?</li>
+                <li>¿Existe API o endpoint disponible?</li>
+                <li>¿Cómo identifican hoy una entrada ya usada?</li>
+                <li>¿Cuántos asistentes esperan por evento?</li>
+                <li>¿Cuántos dispositivos de validación necesitan?</li>
+                <li>¿Cuántos eventos hacen al mes?</li>
+                <li>¿Buscan solo validación o también generación?</li>
+                <li>¿Necesitan envío de entradas por correo?</li>
+            </ul>
+        </section>
+
+        <!-- ===== FOOTER CON LOGO ===== -->
+        <footer class="site-footer">
+            <div class="footer-brand">
+                <img src="https://raw.githubusercontent.com/VitokoMP/ScannerQR/main/me.jpg" alt="AlekArt Codes" />
+                <span>Valida · Validación QR para eventos · 2026</span>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacidad</a>
+                <a href="#">Términos</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // ===== SCROLL ANIMATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.service-card, .pricing-card');
+            if (!cards.length) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, 100 + index * 60);
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            cards.forEach((card) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(12px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+
+</body>
+</html>
